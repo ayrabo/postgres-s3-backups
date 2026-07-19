@@ -4,7 +4,7 @@
     "limitOverride": {
       "containers": {
         "cpu": 2,
-        "memoryBytes": 2
+        "memoryBytes": 2147483648
       }
     }
   }
