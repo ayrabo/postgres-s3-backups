@@ -26,6 +26,10 @@ ARG PG_VERSION='17'
 
 RUN apk add --update --no-cache postgresql${PG_VERSION}-client
 
-CMD pg_isready --dbname=$BACKUP_DATABASE_URL && \
+# Wait up to ~60s for postgres: on dev/demo it sleeps when idle (Railway Serverless, ayrabo#1701), and the first
+# connection attempt only wakes it.
+CMD i=0; until pg_isready --dbname="$BACKUP_DATABASE_URL"; do \
+      i=$((i+1)); [ "$i" -ge 30 ] && exit 1; sleep 2; \
+    done; \
     pg_dump --version && \
     node dist/index.js
